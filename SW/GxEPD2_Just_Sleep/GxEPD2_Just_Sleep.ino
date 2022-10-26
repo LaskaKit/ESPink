@@ -1,3 +1,23 @@
+/*
+* Example code on eInk/ePaper display
+*
+* Compile as ESP32 dev module
+* ESPink - ESP32 board for ePaper: https://www.laskakit.cz/laskakit-espink-esp32-e-paper-pcb-antenna/
+*
+* -------- ESPink pinout -------
+* MOSI/SDI 23
+* CLK/SCK 18
+* SS 5 //CS
+* DC 17 
+* RST 16  
+* BUSY 4 
+* -------------------------------
+*
+* Libraries:
+* EPD library: https://github.com/ZinggJM/GxEPD2
+*
+*/
+
 // Display Library example for SPI e-paper panels from Dalian Good Display and boards from Waveshare.
 // Requires HW SPI and Adafruit_GFX. Caution: the e-paper panels require 3.3V supply AND data lines!
 //

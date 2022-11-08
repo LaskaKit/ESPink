@@ -1,4 +1,4 @@
-![ESPink top](https://github.com/LaskaKit/ESPink/blob/main/img/espink_pinout.png)
+![ESPink top](https://github.com/LaskaKit/ESPink/blob/main/img/espink_pinout1.png)
 
 # ESPink - univerzální a velmi úsporná deska s ESP32 pro ePaper
 

@@ -1,4 +1,4 @@
-![ESPink top](https://github.com/LaskaKit/ESPink/blob/main/img/espink_pinout1.png)
+![ESPink top](https://github.com/LaskaKit/ESPink/blob/main/img/ESPinkPinout.JPG)
 
 # ESPink - versatile and low power board with ESP32 for ePaper/eInk
 

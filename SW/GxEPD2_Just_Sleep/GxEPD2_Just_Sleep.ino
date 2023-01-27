@@ -67,7 +67,7 @@ void setup()
   Serial.println("Display power ON");
   delay(1000);   
   
-  display.init(115200); // default 10ms reset pulse, e.g. for bare panels with DESPI-C02
+  display.init(); // inicializace
 
   // first update should be full refresh
   helloWorld();

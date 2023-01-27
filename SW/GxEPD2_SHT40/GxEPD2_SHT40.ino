@@ -94,7 +94,7 @@ void setup() {
   Serial.print("Temperature: "); Serial.print(temperature.temperature); Serial.println(" degrees C");
   Serial.print("Humidity: "); Serial.print(humidity.relative_humidity); Serial.println("% rH");
 
-  display.init();
+  display.init(); // inicializace
 
   display.setRotation(3);
   display.fillScreen(GxEPD_WHITE);  // white background

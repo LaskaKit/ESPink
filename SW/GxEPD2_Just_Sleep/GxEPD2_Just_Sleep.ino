@@ -82,7 +82,7 @@ void goToSleep(){
   // ESP Deep Sleep 
     
   display.powerOff();
-  digitalWrite(2, LOW);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(2, LOW);   // turn the display OFF (LOW is the voltage level)
   Serial.println("Display power OFF");
   Serial.println("ESP in sleep mode");
   Serial.flush(); 

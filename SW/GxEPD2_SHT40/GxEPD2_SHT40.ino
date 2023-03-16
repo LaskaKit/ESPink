@@ -74,7 +74,7 @@ void setup() {
   adc.attach(34);
 
   // read ADC and calculate the voltage
-  vBat = adc.readVoltage()*1.3; // the ratio of divider
+  vBat = adc.readVoltage()*1.769; // the ratio of divider, R2=1.3M; R1=1M
 
 
   /*----------- SHT40 -----------*/

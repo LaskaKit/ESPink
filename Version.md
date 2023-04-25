@@ -1,5 +1,4 @@
 ### Version 1.3
-- 
 - ADC jumper moved and default closed | Propojka ADC se přesunula a ve výchozím nastavení uzavřena
 - Error fixed, pins 13 and GND were swapped | Opravené chybá popisu, prohození pinů 13 a GND
 #### Version 1.2

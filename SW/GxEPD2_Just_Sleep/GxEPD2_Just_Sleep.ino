@@ -53,6 +53,7 @@
 #include "bitmaps/Bitmaps1304x984.h" // 12.48" b/w
 
 #define SLEEP_SEC 15         // Measurement interval (seconds)
+const char HelloWorld[] = "Hello World!";
 
 void setup()
 {
@@ -94,14 +95,6 @@ void loop()
 {
 }
 
-// note for partial update window and setPartialWindow() method:
-// partial update window size and position is on byte boundary in physical x direction
-// the size is increased in setPartialWindow() if x or w are not multiple of 8 for even rotation, y or h for odd rotation
-// see also comment in GxEPD2_BW.h, GxEPD2_3C.h or GxEPD2_GFX.h for method setPartialWindow()
-
-const char HelloWorld[] = "Hello World!";
-const char HelloArduino[] = "Hello Arduino!";
-const char HelloEpaper[] = "Hello E-Paper!";
 
 void helloWorld()
 {

@@ -64,7 +64,7 @@ void setup()
 
 // turn on power to display
   pinMode(2, OUTPUT);
-  digitalWrite(2, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(2, HIGH);   // turn the Display on (HIGH is the voltage level)
   Serial.println("Display power ON");
   delay(1000);   
   

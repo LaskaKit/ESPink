@@ -9,14 +9,14 @@ Na desce samozřejmě najdeš konektor pro ePaper displeje. Někdy nazvaný tak�
 I takovému odběru jsme chtěli zamezit a tak jsme do napájení přidali tranzistor, který napájení spíná. Tento tranzistor je připojen na GPIO2 a napájení ePaperu je připojeno, 
 pokud se GPIO2 nastaví do HIGH.
 
-Nízká spotřeba je dosažena i tím, že jsme programátor přesunuli na náš univerzální [LaskaKit CH340 programmer](https://www.laskakit.cz/laskakit-ch340-programmer-usb-c--microusb--uart/),
-který používáme u všech našich desek.
+Nízká spotřeba je dosažena i tím, že jsme použili programátor, který je sám o sobě velmi úsporný a tak jeho osazení na desce nepřinese o mnoho vyšší spotřebu.
 
 Deska může být napájena z [lipol akumulátoru](https://www.laskakit.cz/baterie-a-akumulatory/) a ten je nabíjen z USB-C konektoru. 
 Samozřejmě můžeš měřit i napětí na akumulátoru díky integrovanému děliči napětí a přivedeného na GPIO34.
 
-Připojení čidel nebylo nikdy snažší a bezpečnější. Žádná nefungující čidla způsobená přepolováním. Díky našemu μŠup konektoru, který obsahuje i zámek čidla jednoduše připojíš. 
+Připojení čidel nebylo nikdy snažší a bezpečnější. Žádná nefungující čidla způsobená přepolováním. Díky našemu I2C μŠup konektoru, který obsahuje i zámek čidla jednoduše připojíš. 
 Mezi taková čidla s μŠup konektorem patří [LaskaKit SHT40 Senzor teploty a vlhkosti vzduchu ](https://www.laskakit.cz/laskakit-sht40-senzor-teploty-a-vlhkosti-vzduchu/) nebo  [LaskaKit SCD41 Senzor CO2, teploty a vlhkosti vzduchu ](https://www.laskakit.cz/laskakit-scd41-senzor-co2--teploty-a-vlhkosti-vzduchu/).
+Na desce je i SPI μŠup konektor, který může být použit například pro připojení naší desky nazvané microSD reader. 
 
 K dispozici je i spousta GPIO, na které si můžeš zapájet, co budeš potřebovat.
 

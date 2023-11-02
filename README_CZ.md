@@ -6,8 +6,7 @@
 Ale čím tento displej řídit? Proto jsme navrhli ESPink. Velká paměť, nízký odběr, snadné připojení I2C čidel a velká komunita bastlířů okolo ESP32.
 
 Na desce samozřejmě najdeš konektor pro ePaper displeje. Někdy nazvaný také Eink. Displej sám o sobě je velmi úsporný, ale stejně i mimo fázi přepisu odebírá nějaké ty uA. 
-I takovému odběru jsme chtěli zamezit a tak jsme do napájení přidali tranzistor, který napájení spíná. Tento tranzistor je připojen na GPIO2 a napájení ePaperu je připojeno, 
-pokud se GPIO2 nastaví do HIGH.
+I takovému odběru jsme chtěli zamezit a tak jsme do napájení přidali tranzistor, který napájení spíná. Tento tranzistor je připojen na GPIO2 a napájení ePaperu je připojeno, pokud se GPIO2 nastaví do HIGH. Stejným GPIO pinem (GPIO2) se spíná i napětí pro I2C čidla na uŠup konektoru.
 
 Nízká spotřeba je dosažena i tím, že jsme použili programátor, který je sám o sobě velmi úsporný a tak jeho osazení na desce nepřinese o mnoho vyšší spotřebu.
 

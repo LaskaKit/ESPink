@@ -6,7 +6,7 @@
 But what board you should use to control it? We designed ESPink, small board focused on the lowest power consumption, easy connection of sensors and big memory for graphics. 
 The ESPink is based on ESP32 what is one of the most popular Wi-Fi and Bluetooth modules. 
 
-What is on board? Connector for connection of ePaper/eInk. The ePaper is very low power but it is drawing current during sleep (a few uA). To achieve the lowest current, we assembled transistor between power and input of ePaper. Thanks to this, the current through ePaper during the sleep is zero. The gate of transistor is connected to GPIO2 and the power supply for ePaper is enabled in case GPIO2 is set to HIGH.
+What is on board? Connector for connection of ePaper/eInk. The ePaper is very low power but it is drawing current during sleep (a few uA). To achieve the lowest current, we assembled transistor between power and input of ePaper. Thanks to this, the current through ePaper during the sleep is zero. The gate of transistor is connected to GPIO2 and the power supply for ePaper is enabled in case GPIO2 is set to HIGH. The same GPIO (GPIO2) is also used for enabling of power supply for I2C sensor connected to uŠup connector. 
 
 One more feature is the built-in programmer where we used really low power programmer.
 

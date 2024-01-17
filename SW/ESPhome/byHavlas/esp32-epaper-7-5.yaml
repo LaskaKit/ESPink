@@ -1,0 +1,808 @@
+###################
+#
+#
+# e-paper: GDEY075T7 7.5" 800x480
+#
+# case by IKEA
+# HomeAssistant
+# I2C
+# ENABLE voltage for ePaper and I2C sensor - GPIO2 (HIGH - turn on, LOW - turn off)
+#
+# Made by (c) Lukas Havlas 2024
+# Made by (c) laskakit.cz 2023
+#
+###################
+
+#######
+####### Radar sensor "ld2410" je zatím nefunkční, z definice vhodné odstranit
+#######
+
+substitutions:
+  board_name: "ESP32-D0WD LaskaKit"
+
+  gpio_display_clk: GPIO18
+  gpio_display_mosi: GPIO23
+
+  gpio_display_cs: GPIO5
+  gpio_display_dc: GPIO17
+  gpio_display_busy: GPIO4
+  gpio_display_reset: GPIO16
+  
+  gpio_i2c_sda: GPIO21
+  gpio_i2c_scl: GPIO22
+
+  set_time_refresh: "60s"                                                   # refres time for E-ink - 300=5min production
+  set_ha_entity_temp_outside:     sensor.solar_sht3_temperature_2            # name of entity for outside temperature
+  set_ha_entity_temp_bathroom:    sensor.sdsio6_temp_apartman_koupel         # temp entity for bathroom
+  set_ha_entity_temp_bedroom:     sensor.sdsio6_temp_apartman_loznice_zapad  # temp entity for bedroom
+  set_ha_entity_temp_livingroom:  sensor.zb_apartman_air_quality_temperature # temp entity for livingroom
+
+# Global variables for detecting if the display needs to be refreshed.
+globals:
+  - id: data_updated
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
+  - id: cpu_speed
+    type: int
+    restore_value: no
+    initial_value: "0"
+
+esphome:
+  name: esp32-epaper-7
+  friendly_name: esp32-epaper-7
+  comment: E-ink 7.5" Apartmán v kuchyni meteo
+  on_boot:
+    priority: -100 #1000 #pokud je priority 1000 HTTP request neprobehne
+    then:
+      - lambda: |-  #pin 2 řídí napájení E-INK
+          id(cpu_speed) = ESP.getCpuFreqMHz();
+          pinMode(2, OUTPUT);
+          digitalWrite(2, HIGH);
+          delay(100);
+
+esp32:
+  board: nodemcu-32s
+  #framework:
+    #type: arduino
+
+# Enable logging
+logger:
+  level: NONE
+  #baud_rate: 0
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "****************"
+
+ota:
+  password: "******************"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  #ap:
+   # ssid: "Esp32-Epaper-7-5"
+    #password: "ueQ2w876vZfZXS"
+
+captive_portal:
+
+ld2410:
+  id: ld2410_radar
+
+uart:
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  baud_rate: 256000
+  parity: NONE
+  stop_bits: 1
+
+i2c:
+  sda: $gpio_i2c_sda
+  scl: $gpio_i2c_scl
+  scan: false #uspora baterie default true
+
+spi:
+  clk_pin: $gpio_display_clk
+  mosi_pin: $gpio_display_mosi
+
+time:
+  - platform: homeassistant
+    id: time_homeassistant
+
+output:
+  - platform: gpio
+    pin: GPIO2
+    id: gpio_2
+
+
+#Configuration entities
+number:
+  - platform: ld2410
+    timeout:
+      name: Radar Timeout
+    max_move_distance_gate:
+      name: Radar Max Move Distance
+    max_still_distance_gate:
+      name: Radar Max Still Distance
+    g0:
+      move_threshold:
+        name: g0 move threshold
+      still_threshold:
+        name: g0 still threshold
+    g1:
+      move_threshold:
+        name: g1 move threshold
+      still_threshold:
+        name: g1 still threshold
+    g2:
+      move_threshold:
+        name: g2 move threshold
+      still_threshold:
+        name: g2 still threshold
+    g3:
+      move_threshold:
+        name: g3 move threshold
+      still_threshold:
+        name: g3 still threshold
+    g4:
+      move_threshold:
+        name: g4 move threshold
+      still_threshold:
+        name: g4 still threshold
+    g5:
+      move_threshold:
+        name: g5 move threshold
+      still_threshold:
+        name: g5 still threshold
+    g6:
+      move_threshold:
+        name: g6 move threshold
+      still_threshold:
+        name: g6 still threshold
+    g7:
+      move_threshold:
+        name: g7 move threshold
+      still_threshold:
+        name: g7 still threshold
+    g8:
+      move_threshold:
+        name: g8 move threshold
+      still_threshold:
+        name: g8 still threshold
+  # Setting ending of zone 1 occupancy
+  - platform: template
+    name: "Radar End Zone 1"
+    id: radar_z1_end
+    device_class: distance
+    min_value: 0
+    max_value: 600
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 10
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+
+  # Setting ending of zone 2 occupancy
+  - platform: template
+    name: "Radar End Zone 2"
+    id: radar_z2_end
+    device_class: distance
+    min_value: 0
+    max_value: 600
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 36
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+
+  # Setting ending of zone 3 occupancy
+  - platform: template
+    name: "Radar End Zone 3"
+    id: radar_z3_end
+    device_class: distance
+    min_value: 0
+    max_value: 600
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 100
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+
+binary_sensor:
+  - platform: ld2410
+    has_target:
+      name: Radar Target
+      id: radar_has_target
+    has_moving_target:
+      name: Radar Moving Target
+    has_still_target:
+      name: Radar Still Target
+  ## Set Up Radar Zones Based On Distance
+  - platform: template
+    name: "Radar Zone 1 Occupancy"
+    device_class: occupancy
+    icon: mdi:motion-sensor
+    lambda: |-
+      if ((id(radar_has_target).state) && (id(radar_detection_distance).state < id(radar_z1_end).state)) {
+        return true;
+      } else {
+        return false;
+      }
+  - platform: template
+    name: "Radar Zone 2 Occupancy"
+    device_class: occupancy
+    icon: mdi:motion-sensor
+    lambda: |-
+      if ((id(radar_has_target).state) && ((id(radar_z1_end).state < id(radar_detection_distance).state) && (id(radar_detection_distance).state < id(radar_z2_end).state))) {
+        return true;
+      } else {
+        return false;
+      }
+  - platform: template
+    name: "Radar Zone 3 Occupancy"
+    device_class: occupancy
+    icon: mdi:motion-sensor
+    lambda: |-
+      if ((id(radar_has_target).state) && ((id(radar_z2_end).state < id(radar_detection_distance).state) && (id(radar_detection_distance).state < id(radar_z3_end).state))) {
+        return true;
+      } else {
+        return false;
+      }
+
+switch:
+  - platform: ld2410
+    bluetooth:
+      name: "Radar Control Bluetooth"
+      id: radar_bluetooth
+    engineering_mode:
+      name: "Radar Engineering Mode"
+
+
+text_sensor:
+  - platform: ld2410
+    version:
+      name: "Radar Firmware Version"
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+      id: "ip_address"
+    ssid:
+      name: "Connected SSID"
+      id: "connected_ssid"
+    bssid:
+      name: "Connected BSSID"
+      id: "connected_bssid"
+    mac_address:
+      name: "MAC Wifi Address"
+      id: "mac_wifi_address"
+
+  - platform: version
+    name: "ESPHome Version"
+    id: "esphome_version"
+    hide_timestamp: True
+
+  - platform: template
+    name: Uptime
+    id: uptime_human
+    icon: mdi:clock-start
+
+  - platform: template
+    name: Board Name
+    id: board_name
+    update_interval: 960s
+    icon: mdi:cpu-32-bit
+    lambda: |-
+      return {"$board_name"};
+
+
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.openweather_condition
+    id: weather_now_condition
+    on_value:
+      then:
+         - lambda: 'id(data_updated) = true;'
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot1_condition   #HA template definition is {{ state_attr('weather.openweather', 'forecast')[1].condition }} 
+    id: weather_1_condition
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot2_condition
+    id: weather_2_condition
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot3_condition
+    id: weather_3_condition
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot4_condition
+    id: weather_4_condition
+
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot1_time        #HA template definition is {{ as_timestamp(strptime(state_attr('weather.openweather', 'forecast')[1].datetime, '%Y-%m-%dT%H:%M:%S+00:00')) | timestamp_custom('%H:%M') }}
+    id: weather_1_time
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot2_time
+    id: weather_2_time
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot3_time
+    id: weather_3_time
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot4_time
+    id: weather_4_time
+
+
+
+
+sensor:
+  - platform: wifi_signal
+    name: "wifi signal"
+    id: "wifi_signal_db"
+    unit_of_measurement: "dB"
+    update_interval: 120s
+
+  - platform: template
+    name: "ESP CPU speed"
+    id: "esp_cpu_speed"
+    accuracy_decimals: 0
+    unit_of_measurement: Mhz
+    entity_category: "diagnostic"
+    lambda: |-
+      return (id(cpu_speed));
+    
+
+  - platform: ld2410
+    moving_distance:
+      name: Radar Moving Distance
+      id: moving_distance
+    still_distance:
+      name: Radar Still Distance
+      id: still_distance
+    moving_energy:
+      name: Radar Move Energy
+    still_energy:
+      name: Radar Still Energy
+    detection_distance:
+      name: Radar Detection Distance
+      id: radar_detection_distance
+
+    g0:
+      move_energy:
+        name: g0 move energy
+      still_energy:
+        name: g0 still energy
+    g1:
+      move_energy:
+        name: g1 move energy
+      still_energy:
+        name: g1 still energy
+    g2:
+      move_energy:
+        name: g2 move energy
+      still_energy:
+        name: g2 still energy
+    g3:
+      move_energy:
+        name: g3 move energy
+      still_energy:
+        name: g3 still energy
+    g4:
+      move_energy:
+        name: g4 move energy
+      still_energy:
+        name: g4 still energy
+    g5:
+      move_energy:
+        name: g5 move energy
+      still_energy:
+        name: g5 still energy
+    g6:
+      move_energy:
+        name: g6 move energy
+      still_energy:
+        name: g6 still energy
+    g7:
+      move_energy:
+        name: g7 move energy
+      still_energy:
+        name: g7 still energy
+    g8:
+      move_energy:
+        name: g8 move energy
+      still_energy:
+        name: g8 still energy
+
+
+
+  - platform: homeassistant
+    internal: true
+    entity_id: $set_ha_entity_temp_outside
+    id: weather_temp_outside
+    on_value:
+      then:
+         - lambda: 'id(data_updated) = true;'
+    
+  - platform: homeassistant
+    internal: true
+    entity_id: $set_ha_entity_temp_bathroom
+    id: temp_bath
+    
+  - platform: homeassistant
+    internal: true
+    entity_id: $set_ha_entity_temp_bedroom
+    id: temp_sleep
+    
+  - platform: homeassistant
+    internal: true
+    entity_id: $set_ha_entity_temp_livingroom
+    id: temp_living
+
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot1_temperature           #HA template definition is {{ state_attr('weather.openweather', 'forecast')[1].temperature }}
+    id: weather_1_temperature
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot2_temperature
+    id: weather_2_temperature
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot3_temperature
+    id: weather_3_temperature
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot4_temperature
+    id: weather_4_temperature
+
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot1_precipitation_probability
+    id: weather_1_precipitation_probability
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot2_precipitation_probability
+    id: weather_2_precipitation_probability
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot3_precipitation_probability
+    id: weather_3_precipitation_probability
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot4_precipitation_probability
+    id: weather_4_precipitation_probability
+
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot1_precipitation
+    id: weather_1_precipitation
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot2_precipitation
+    id: weather_2_precipitation
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot3_precipitation
+    id: weather_3_precipitation
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot4_precipitation
+    id: weather_4_precipitation
+
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot1_wind_speed      #HA template definition is {{ state_attr('weather.openweather', 'forecast')[1].wind_speed }}
+    id: weather_1_wind
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot2_wind_speed
+    id: weather_2_wind
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot3_wind_speed
+    id: weather_3_wind
+  - platform: homeassistant
+    internal: true
+    entity_id: sensor.weather_slot4_wind_speed
+    id: weather_4_wind
+
+
+  - platform: sht4x
+    update_interval: 120s 
+    temperature:
+      id: "sht4x_temperature"
+      name: "Temperature"
+
+    humidity:
+      id: "sht4x_humidity"
+      name: "Humidity"
+
+  - platform: uptime
+    name: Uptime Sensor
+    id: uptime_sensor
+    update_interval: 60s
+    internal: true
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: uptime_human
+            state: !lambda |-
+              int seconds = round(id(uptime_sensor).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? String(days) + "d " : "") +
+                (hours ? String(hours) + "h " : "") +
+                (minutes ? String(minutes) + "m " : "") 
+              ).c_str();
+
+
+font:
+  - file: 'fonts/impact.ttf'
+    id: font_day
+    size: 60
+  - file: 'fonts/impact.ttf'
+    id: font_h1
+    size: 110
+  - file: 'fonts/impact.ttf'
+    id: font_h2
+    size: 35
+  - file: 'fonts/impact.ttf'
+    id: font_h3
+    size: 25
+  - file: 'fonts/impact.ttf'
+    id: font_h4
+    size: 13
+
+  - file: 'fonts/materialdesignicons-webfont2.ttf'
+    id: font_wifi
+    size: 25
+    glyphs:
+      - "\U000F092E" # mdi-wifi-strength-off-outline
+      - "\U000F092F" # mdi-wifi-strength-outline
+      - "\U000F091F" # mdi-wifi-strength-1
+      - "\U000F0922" # mdi-wifi-strength-2
+      - "\U000F0925" # mdi-wifi-strength-3
+      - "\U000F0928" # mdi-wifi-strength-4
+
+  - file: 'fonts/materialdesignicons-webfont2.ttf'
+    id: font_home
+    size: 55
+    glyphs: &mdi-main-glyphs
+      - "\U000F09A0" # mdi-shower
+      - "\U000F0FD1" # mdi-bed-king-outline
+      - "\U000F156D" # mdi-sofa-outline
+      - "\U000F050F" # mdi-thermometer
+      - "\U000F054B" # mdi-umbrella-outline
+      - "\U000F059D" # mdi-weather-windy
+  - file: 'fonts/materialdesignicons-webfont.ttf'
+    id: font_home_small
+    size: 26
+    glyphs: *mdi-main-glyphs
+
+  - file: 'fonts/materialdesignicons-webfont.ttf'
+    id: font_weather
+    size: 170
+    glyphs: &mdi-weather-glyphs
+      - "\U000F0590" # mdi-weather-cloudy
+      - "\U000F0F2F" # mdi-weather-cloudy-alert
+      - "\U000F0E6E" # mdi-weather-cloudy-arrow-right
+      - "\U000F0591" # mdi-weather-fog
+      - "\U000F0592" # mdi-weather-hail
+      - "\U000F0F30" # mdi-weather-hazy
+      - "\U000F0898" # mdi-weather-hurricane
+      - "\U000F0593" # mdi-weather-lightning
+      - "\U000F067E" # mdi-weather-lightning-rainy
+      - "\U000F0594" # mdi-weather-clear-night
+      - "\U000F0F31" # mdi-weather-night-partly-cloudy
+      - "\U000F0595" # mdi-weather-partly-cloudy
+      - "\U000F0F32" # mdi-weather-partly-lightning
+      - "\U000F0F33" # mdi-weather-partly-rainy
+      - "\U000F0F34" # mdi-weather-partly-snowy
+      - "\U000F0F35" # mdi-weather-partly-snowy-rainy
+      - "\U000F0596" # mdi-weather-pouring
+      - "\U000F0597" # mdi-weather-rainy
+      - "\U000F0598" # mdi-weather-snowy
+      - "\U000F0F36" # mdi-weather-snowy-heavy
+      - "\U000F067F" # mdi-weather-snowy-rainy
+      - "\U000F0599" # mdi-weather-sunny
+      - "\U000F0F37" # mdi-weather-sunny-alert
+      - "\U000F14E4" # mdi-weather-sunny-off
+      - "\U000F059A" # mdi-weather-sunset
+      - "\U000F059B" # mdi-weather-sunset-down
+      - "\U000F059C" # mdi-weather-sunset-up
+      - "\U000F0F38" # mdi-weather-tornado
+      - "\U000F059D" # mdi-weather-windy
+      - "\U000F059E" # mdi-weather-windy-variant
+
+  - file: 'fonts/materialdesignicons-webfont.ttf'
+    id: font_weather_small
+    size: 60
+    glyphs: *mdi-weather-glyphs
+    
+display:
+  - platform: waveshare_epaper
+    cs_pin: $gpio_display_cs
+    dc_pin: $gpio_display_dc
+    busy_pin: $gpio_display_busy
+    reset_pin: $gpio_display_reset
+    #model: 7.50inV2 # s timto funguje
+    model: 7.50in-bV3 #s timto funguje a invertuje barvy
+    #model: 7.50in-bV2 #s timto nefunguje
+    reset_duration: 20ms
+    update_interval: $set_time_refresh
+    rotation: 90°
+
+    pages:
+      - id: page1
+        lambda: |-
+
+          ESP_LOGD("main", "display");
+          id(gpio_2).turn_on();
+
+
+          // Map weather states to MDI characters.
+          std::map<std::string, std::string> weather_icon_map
+            {
+              {"cloudy", "\U000F0590"},
+              {"cloudy-alert", "\U000F0F2F"},
+              {"cloudy-arrow-right", "\U000F0E6E"},
+              {"fog", "\U000F0591"},
+              {"hail", "\U000F0592"},
+              {"hazy", "\U000F0F30"},
+              {"hurricane", "\U000F0898"},
+              {"lightning", "\U000F0593"},
+              {"lightning-rainy", "\U000F067E"},
+              {"clear-night", "\U000F0594"},
+              {"night-partly-cloudy", "\U000F0F31"},
+              {"partlycloudy", "\U000F0595"},
+              {"partly-lightning", "\U000F0F32"},
+              {"partly-rainy", "\U000F0F33"},
+              {"partly-snowy", "\U000F0F34"},
+              {"partly-snowy-rainy", "\U000F0F35"},
+              {"pouring", "\U000F0596"},
+              {"rainy", "\U000F0597"},
+              {"snowy", "\U000F0598"},
+              {"snowy-heavy", "\U000F0F36"},
+              {"snowy-rainy", "\U000F067F"},
+              {"sunny", "\U000F0599"},
+              {"sunny-alert", "\U000F0F37"},
+              {"sunny-off", "\U000F14E4"},
+              {"sunset", "\U000F059A"},
+              {"sunset-down", "\U000F059B"},
+              {"sunset-up", "\U000F059C"},
+              {"tornado", "\U000F0F38"},
+              {"windy", "\U000F059D"},
+              {"windy-variant", "\U000F059E"},
+            };
+
+          ///////////////////////// WIFI /////////////////////////////
+          ////////////////////////////////////////////////////////////
+          if (isnan(id(wifi_signal_db).state)) {
+            it.print(450,0, id(font_wifi), COLOR_ON, "\U000F092E"); // signal nenalezen / nenacten
+          } else if (id(wifi_signal_db).state > -50) {
+            it.print(450,0, id(font_wifi), COLOR_OFF, "\U000F0928");
+          } else if ((id(wifi_signal_db).state > -60) and (id(wifi_signal_db).state <= -50)) {
+            it.print(450,0, id(font_wifi), COLOR_OFF, "\U000F0925");
+          } else if ((id(wifi_signal_db).state > -70) and (id(wifi_signal_db).state <= -60)) {
+            it.print(450,0, id(font_wifi), COLOR_OFF, "\U000F0922");
+          } else if ((id(wifi_signal_db).state > -80) and (id(wifi_signal_db).state <= -70)) {
+            it.print(450,0, id(font_wifi), COLOR_OFF, "\U000F091F");
+          } else {
+            it.print(450,0, id(font_wifi), COLOR_OFF, "\U000F092F");
+          }
+          
+          ////// CAS A DATUM //////
+          it.strftime(225, 35, id(font_day), TextAlign::TOP_CENTER, "%A", id(time_homeassistant).now());          /// day of week
+          it.strftime(225, 100, id(font_h3), TextAlign::TOP_CENTER, "%d.%m", id(time_homeassistant).now()); 
+
+          //it.strftime(5, 30, id(font_h2), "%d.%m", id(time_homeassistant).now()); 
+          //it.strftime(6, 67, id(font_h3), "%A", id(time_homeassistant).now());          /// day of week
+          //it.strftime(5, 72, id(font_h3), "%Y", id(time_homeassistant).now()); 
+          //it.strftime(250, 0, id(font_h1), TextAlign::TOP_CENTER, "%H:%M", id(time_homeassistant).now()); 
+          
+          ////// ICO POCASI ///////
+          it.printf(120, 120, id(font_weather), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_now_condition).state.c_str()].c_str());
+          it.printf(340, 148, id(font_h1), TextAlign::TOP_CENTER, "%.0f°", id(weather_temp_outside).state);
+
+          ////////////////////////////////////
+          ////// ICO PREDPOVED 4 SLOTY //////
+          ////////////////////////////////////
+
+          ///// SLOTY ICONY POPISUJICI RADKY
+          it.print    (12,  413, id(font_home_small), TextAlign::TOP_LEFT, "\U000F050F"); //ICO TEPLOTA
+          it.print    (12,  445, id(font_home_small), TextAlign::TOP_LEFT, "\U000F054B"); //ICO DEST
+          it.print    (12,  477, id(font_home_small), TextAlign::TOP_LEFT, "\U000F059D"); //ICO VITR
+
+          /// SLOT1
+          it.printf   (85, 315, id(font_h4), TextAlign::TOP_CENTER, "%s", id(weather_1_time).state.c_str() ); 
+          it.printf   (85, 340, id(font_weather_small), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_1_condition).state.c_str()].c_str());
+          it.printf   (85, 410, id(font_h3), TextAlign::TOP_CENTER, "%.1f°", id(weather_1_temperature).state );
+          it.printf   (85, 443, id(font_h4), TextAlign::TOP_CENTER, "%.0f%%", id(weather_1_precipitation_probability).state );
+          it.printf   (85, 456, id(font_h4), TextAlign::TOP_CENTER, "%.1f mm", id(weather_1_precipitation).state );
+          it.printf   (85, 480, id(font_h4), TextAlign::TOP_CENTER, "%.1f m/s", id(weather_1_wind).state );
+
+          /// SLOT2
+          it.printf   (177, 315, id(font_h4), TextAlign::TOP_CENTER, "%s", id(weather_2_time).state.c_str() ); 
+          it.printf   (177, 340, id(font_weather_small), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_2_condition).state.c_str()].c_str());
+          it.printf   (177, 410, id(font_h3), TextAlign::TOP_CENTER, "%.1f°", id(weather_2_temperature).state );
+          it.printf   (177, 443, id(font_h4), TextAlign::TOP_CENTER, "%.0f%%", id(weather_2_precipitation_probability).state );
+          it.printf   (177, 456, id(font_h4), TextAlign::TOP_CENTER, "%.1f mm", id(weather_2_precipitation).state );
+          it.printf   (177, 480, id(font_h4), TextAlign::TOP_CENTER, "%.1f m/s", id(weather_2_wind).state );
+
+          /// SLOT3
+          it.printf   (266, 315, id(font_h4), TextAlign::TOP_CENTER, "%s", id(weather_3_time).state.c_str() ); 
+          it.printf   (266, 340, id(font_weather_small), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_3_condition).state.c_str()].c_str());
+          it.printf   (266, 410, id(font_h3), TextAlign::TOP_CENTER, "%.1f°", id(weather_3_temperature).state );
+          it.printf   (266, 443, id(font_h4), TextAlign::TOP_CENTER, "%.0f%%", id(weather_3_precipitation_probability).state );
+          it.printf   (266, 456, id(font_h4), TextAlign::TOP_CENTER, "%.1f mm", id(weather_3_precipitation).state );
+          it.printf   (266, 480, id(font_h4), TextAlign::TOP_CENTER, "%.1f m/s", id(weather_3_wind).state );
+
+          /// SLOT4
+          it.printf   (355, 315, id(font_h4), TextAlign::TOP_CENTER, "%s", id(weather_4_time).state.c_str() ); 
+          it.printf   (355, 340, id(font_weather_small), TextAlign::TOP_CENTER, "%s", weather_icon_map[id(weather_4_condition).state.c_str()].c_str());
+          it.printf   (355, 410, id(font_h3), TextAlign::TOP_CENTER, "%.1f°", id(weather_4_temperature).state );
+          it.printf   (355, 443, id(font_h4), TextAlign::TOP_CENTER, "%.0f%%", id(weather_4_precipitation_probability).state );
+          it.printf   (355, 456, id(font_h4), TextAlign::TOP_CENTER, "%.1f mm", id(weather_4_precipitation).state );
+          it.printf   (355, 480, id(font_h4), TextAlign::TOP_CENTER, "%.1f m/s", id(weather_4_wind).state );
+
+          
+
+
+          /// TEMP koupelna
+          it.rectangle(25, 540, 120, 150);
+          it.filled_rectangle(25, 540, 120, 30);
+          it.print    (85, 540, id(font_h3), COLOR_OFF, TextAlign::TOP_CENTER,  "BATHROOM");
+          it.print    (85, 580, id(font_home), TextAlign::TOP_CENTER, "\U000F09A0");
+          it.printf   (85, 640, id(font_h2), TextAlign::TOP_CENTER, "%.1f°", id(temp_bath).state );
+
+          ///// TEMP loznice 
+          it.rectangle(162, 540, 120, 150);
+          it.filled_rectangle(162, 540, 120, 30);
+          it.print    (222, 540, id(font_h3), COLOR_OFF, TextAlign::TOP_CENTER,  "BEDROOM");
+          it.print    (222, 580, id(font_home), TextAlign::TOP_CENTER, "\U000F0FD1");
+          it.printf   (222, 640, id(font_h2), TextAlign::TOP_CENTER, "%.1f°", id(temp_sleep).state );
+
+          ////// TEMP LIVING ROOM
+          it.rectangle(299, 540, 120, 150);
+          it.filled_rectangle(299, 540, 120, 30);
+          it.print    (359, 540, id(font_h3), COLOR_OFF, TextAlign::TOP_CENTER,  "LIVING");
+          it.print    (359, 580, id(font_home), TextAlign::TOP_CENTER, "\U000F156D");
+          it.printf   (359, 640, id(font_h2), TextAlign::TOP_CENTER, "%.1f°", id(temp_living).state );
+
+
+
+          //// FOOT
+          //it.print    (6 , 705, id(font_h4), TextAlign::TOP_LEFT, "update:");
+          it.strftime (5,   700, id(font_h4), "%d.%m %H:%M", id(time_homeassistant).now()); 
+          it.printf   (80,  700, id(font_h4), "%s", id(ip_address).state.c_str() ); 
+          it.printf   (160, 700, id(font_h4), "(%.0fdb)", id(wifi_signal_db).state ); 
+          it.printf   (320, 700, id(font_h4), "%s", id(board_name).state.c_str() ); 
+          
+
+          
+
+          ///// debug info //////
+          //it.printf(5, 680, id(font_h3), TextAlign::TOP_LEFT, "%s", id(weather_now_condition).state.c_str() ); 

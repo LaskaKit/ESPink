@@ -1,4 +1,6 @@
-### Version 2.5
+### Version 2.6
+- Resistor R9 changed to 0.47 Ohm
+#### Version 2.5
 - Programming chip (CH9102) added. Still about 10µA in deep sleep ;)
 - New µŠUP SPI connector (need to be powered by pin IO02)
 - Separated LDO with Enable pin IO02 for uSup connector, 500mA max on 3.3V

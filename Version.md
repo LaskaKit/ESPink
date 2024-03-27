@@ -1,5 +1,5 @@
 ### Version 2.6
-- Resistor R9 changed to 0.47 Ohm
+- Resistor R12 changed to 2.55 Ohm
 #### Version 2.5
 - Programming chip (CH9102) added. Still about 10µA in deep sleep ;)
 - New µŠUP SPI connector (need to be powered by pin IO02)

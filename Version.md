@@ -1,4 +1,9 @@
-### Version 2.6
+### Version 3.1
+- Updated, more configurable driver schématic for display, based on displays datasheet and adapters from Good Display.
+- Simplified power switching for display.
+- Switching Battery ADC on GPIO09
+- TODO: rethink charging, charging alert
+#### Version 2.6
 - Resistor R12 changed to 2.55 Ohm
 #### Version 2.5
 - Programming chip (CH9102) added. Still about 10µA in deep sleep ;)

@@ -1,65 +1,31 @@
-// Display Library example for SPI e-paper panels from Dalian Good Display and boards from Waveshare.
-// Requires HW SPI and Adafruit_GFX. Caution: the e-paper panels require 3.3V supply AND data lines!
-//
-// Display Library based on Demo Example from Good Display: http://www.e-paper-display.com/download_list/downloadcategoryid=34&isMode=false.html
-//
-// Author: Jean-Marc Zingg
-//
-// Version: see library.properties
-//
-// Library: https://github.com/ZinggJM/GxEPD2
+/******************************************************************************
+Example4: test all the things on the MAX17048
+By: Paul Clark, SparkFun Electronics
+Date: October 23rd 2020
 
-// Supporting Arduino Forum Topics:
-// Waveshare e-paper displays with SPI: http://forum.arduino.cc/index.php?topic=487007.0
-// Good Display ePaper for Arduino: https://forum.arduino.cc/index.php?topic=436411.0
+This example is an everything-but-the-kitchen-sink test of the MAX17048.
 
-// see GxEPD2_wiring_examples.h for wiring suggestions and examples
+This code is released under the MIT license.
 
-// base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
-// enable or disable GxEPD2_GFX base class
-#define ENABLE_GxEPD2_GFX 0
+Distributed as-is; no warranty is given.
+******************************************************************************/
 
-// uncomment next line to use class GFX of library GFX_Root instead of Adafruit_GFX
-//#include <GFX.h>
-// Note: if you use this with ENABLE_GxEPD2_GFX 1:
-//       uncomment it in GxEPD2_GFX.h too, or add #include <GFX.h> before any #include <GxEPD2_GFX.h>
+#include <Wire.h> // Needed for I2C
 
-#include <GxEPD2_BW.h>
 #include <SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library
-#include <Fonts/FreeMonoBold9pt7b.h>
-
-#define SLEEP_SEC 15         // Measurement interval (seconds)
-//MOSI/SDI    11
-//CLK/SCK     12
-//SS/CS       10
-#define DC    48 
-#define RST   45  
-#define BUSY  36 
-#define POWER 47
-#define SDA   42
-#define SCL   2
 
 SFE_MAX1704X lipo(MAX1704X_MAX17048); // Create a MAX17048
-
-GxEPD2_BW<GxEPD2_270, GxEPD2_270::HEIGHT> display(GxEPD2_270(SS, DC, RST, BUSY)); // GDEW027W3 176x264, EK79652 (IL91874)
-//GxEPD2_BW<GxEPD2_420_GDEY042T81, GxEPD2_420_GDEY042T81::HEIGHT> display(GxEPD2_420_GDEY042T81(SS, DC, RST, BUSY)); // GDEY042T81, 400x300, SSD1683 (no inking)
-
-void setup() {
-  Serial.begin(115200);
-  Serial.println();
-  Serial.println("setup");
-  delay(100);
-
-// turn on power to display
-  pinMode(POWER, OUTPUT);
-  digitalWrite(POWER, HIGH);   // turn the LED on (HIGH is the voltage level)
-  Serial.println("Display power ON");
-  delay(1000);  
+#define SDA   42
+#define SCL   2
+void setup()
+{
+	Serial.begin(115200); // Start serial, to output debug data
+  while (!Serial)
+    ; //Wait for user to open terminal
+  Serial.println(F("MAX17048 Example"));
 
   Wire.begin (SDA, SCL);
-  
-  display.init(); // inicializace
-  delay(1000);
+
   lipo.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // Set up the MAX17048 LiPo fuel gauge:
@@ -175,7 +141,11 @@ void setup() {
   float hibThr = ((float)lipo.getHIBRTHibThr()) * 0.208; // 1 LSb is 0.208%/hr. Convert to %/hr.
   Serial.print(hibThr, 3);
   Serial.println(F("%/h"));
-   // Print the variables:
+}
+
+void loop()
+{
+  // Print the variables:
   Serial.print("Voltage: ");
   Serial.print(lipo.getVoltage());  // Print the battery voltage
   Serial.print("V");
@@ -187,60 +157,26 @@ void setup() {
   Serial.print(" Change Rate: ");
   Serial.print(lipo.getChangeRate(), 2); // Print the battery change rate with 2 decimal places
   Serial.print("%/hr");
+
+  Serial.print(" Alert: ");
+  Serial.print(lipo.getAlert()); // Print the generic alert flag
+
+  Serial.print(" Voltage High Alert: ");
+  Serial.print(lipo.isVoltageHigh()); // Print the alert flag
+
+  Serial.print(" Voltage Low Alert: ");
+  Serial.print(lipo.isVoltageLow()); // Print the alert flag
+
+  Serial.print(" Empty Alert: ");
+  Serial.print(lipo.isLow()); // Print the alert flag
+
+  Serial.print(" SOC 1% Change Alert: ");
+  Serial.print(lipo.isChange()); // Print the alert flag
+  
+  Serial.print(" Hibernating: ");
+  Serial.print(lipo.isHibernating()); // Print the alert flag
   
   Serial.println();
 
-  // first update should be full refresh
-  Display();
-  delay(1000);
-
-  display.powerOff();
-
-  Serial.println("setup done");
-
-  goToSleep();
-}
-
-void goToSleep(){
-  Serial.println("going to sleep " + String(SLEEP_SEC) + " sek");
-  Serial.print("enableHibernate (Output: 0 on success, positive integer on fail): ");
-  Serial.println(lipo.enableHibernate());
-
-  // ESP Deep Sleep 
-  digitalWrite(POWER, LOW);   // turn the LED on (HIGH is the voltage level)
-  Serial.println("Display power OFF");
-  Serial.println("ESP in sleep mode");
-  Serial.flush(); 
-  esp_sleep_enable_timer_wakeup(SLEEP_SEC * 1000000);
-  esp_deep_sleep_start();
-}
-
-void loop()
-{
-}
-
-const char HelloWorld[] = "Hello World!";
-
-void Display()
-{
-  //Serial.println("helloWorld");
-  display.setRotation(1);
-  display.setFont(&FreeMonoBold9pt7b);
-  if (display.epd2.WIDTH < 104) display.setFont(0);
-  display.setTextColor(GxEPD_BLACK);
-
-  display.setFullWindow();
-  display.firstPage();
-  do
-  {
-    display.fillScreen(GxEPD_WHITE);
-    display.setCursor(5, 20);
-    display.print("Voltage: " + String(lipo.getVoltage()) + "V");
-    display.setCursor(5, 50);
-    display.print("Percentage: " + String(lipo.getSOC(), 2) + "%");
-    display.setCursor(5, 80);
-    display.print("Change Rate: " + String(lipo.getChangeRate(), 2) + "%/hr");
-  }
-  while (display.nextPage());
-  Serial.println("Writing done");
+  delay(500);
 }

@@ -16,7 +16,6 @@
 * -------------------------------
 *
 * Libraries:
-* Analog read with calibration data: https://github.com/madhephaestus/ESP32AnalogRead/ 
 * SHT40: https://github.com/adafruit/Adafruit_SHT4X
 * EPD library: https://github.com/ZinggJM/GxEPD2
 *
@@ -31,7 +30,6 @@
 #include "Adafruit_SHT4x.h"
 
 // ADC reading
-#include <ESP32AnalogRead.h>
  
 // Fonts
 #include "OpenSansSB_12px.h"
@@ -62,7 +60,6 @@ GxEPD2_BW<GxEPD2_270, GxEPD2_270::HEIGHT> display(GxEPD2_270(/*CS=5*/ SS, /*DC=*
 Adafruit_SHT4x sht4 = Adafruit_SHT4x();
 
 // ADC
-ESP32AnalogRead adc;
 float vBat = 0.0;
  
 void setup() {
@@ -71,11 +68,8 @@ void setup() {
   digitalWrite(2, HIGH); // enable power supply for ePaper and uSup
   delay(500);
 
-  // attach ADC input
-  adc.attach(34);
-
   // read ADC and calculate the voltage
-  vBat = adc.readVoltage()*1.769; // the ratio of divider, R2=1.3M; R1=1M
+  vBat = analogReadMilliVolts(34) * 1.769 / 1000; // the ratio of divider, R2=1.3M; R1=1M
 
 
   /*----------- SHT40 -----------*/

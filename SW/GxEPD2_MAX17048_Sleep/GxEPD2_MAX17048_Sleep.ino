@@ -25,6 +25,7 @@
 //       uncomment it in GxEPD2_GFX.h too, or add #include <GFX.h> before any #include <GxEPD2_GFX.h>
 
 #include <GxEPD2_BW.h>
+#include <GxEPD2_4C.h>
 #include <SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library
 #include <Fonts/FreeMonoBold9pt7b.h>
 
@@ -41,8 +42,9 @@
 
 SFE_MAX1704X lipo(MAX1704X_MAX17048); // Create a MAX17048
 
-GxEPD2_BW<GxEPD2_270, GxEPD2_270::HEIGHT> display(GxEPD2_270(SS, DC, RST, BUSY)); // GDEW027W3 176x264, EK79652 (IL91874)
+//GxEPD2_BW<GxEPD2_270, GxEPD2_270::HEIGHT> display(GxEPD2_270(SS, DC, RST, BUSY)); // GDEW027W3 176x264, EK79652 (IL91874)
 //GxEPD2_BW<GxEPD2_420_GDEY042T81, GxEPD2_420_GDEY042T81::HEIGHT> display(GxEPD2_420_GDEY042T81(SS, DC, RST, BUSY)); // GDEY042T81, 400x300, SSD1683 (no inking)
+GxEPD2_4C<GxEPD2_290c_GDEY029F51H, GxEPD2_290c_GDEY029F51H::HEIGHT> display(GxEPD2_290c_GDEY029F51H(SS, DC, RST, BUSY));
 
 void setup() {
   Serial.begin(115200);

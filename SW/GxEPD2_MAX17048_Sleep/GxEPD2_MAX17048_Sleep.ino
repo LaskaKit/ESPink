@@ -29,7 +29,7 @@
 #include <SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library
 #include <Fonts/FreeMonoBold9pt7b.h>
 
-#define SLEEP_SEC 15         // Measurement interval (seconds)
+#define SLEEP_SEC 1500         // Measurement interval (seconds)
 //MOSI/SDI    11
 //CLK/SCK     12
 //SS/CS       10
@@ -37,14 +37,14 @@
 #define RST   45  
 #define BUSY  36 
 #define POWER 47
+#define ALERT 9
 #define SDA   42
 #define SCL   2
 
 SFE_MAX1704X lipo(MAX1704X_MAX17048); // Create a MAX17048
 
-//GxEPD2_BW<GxEPD2_270, GxEPD2_270::HEIGHT> display(GxEPD2_270(SS, DC, RST, BUSY)); // GDEW027W3 176x264, EK79652 (IL91874)
-//GxEPD2_BW<GxEPD2_420_GDEY042T81, GxEPD2_420_GDEY042T81::HEIGHT> display(GxEPD2_420_GDEY042T81(SS, DC, RST, BUSY)); // GDEY042T81, 400x300, SSD1683 (no inking)
-GxEPD2_4C<GxEPD2_290c_GDEY029F51H, GxEPD2_290c_GDEY029F51H::HEIGHT> display(GxEPD2_290c_GDEY029F51H(SS, DC, RST, BUSY));
+//GxEPD2_BW<GxEPD2_426_GDEQ0426T82, GxEPD2_426_GDEQ0426T82::HEIGHT> display(GxEPD2_426_GDEQ0426T82(SS, DC, RST, BUSY)); // GDEQ0426T82 480x800, SSD1677 (P426010-MF1-A)
+GxEPD2_4C<GxEPD2_290c_GDEY029F51H, GxEPD2_290c_GDEY029F51H::HEIGHT> display(GxEPD2_290c_GDEY029F51H(SS, DC, RST, BUSY)); // GDEY029F51H 168x384, JD79667 (FPC-H004 22.03.24)
 
 void setup() {
   Serial.begin(115200);
@@ -54,6 +54,8 @@ void setup() {
 
 // turn on power to display
   pinMode(POWER, OUTPUT);
+  pinMode(ALERT, INPUT_PULLUP);
+
   digitalWrite(POWER, HIGH);   // turn the LED on (HIGH is the voltage level)
   Serial.println("Display power ON");
   delay(1000);  
@@ -62,7 +64,7 @@ void setup() {
   
   display.init(); // inicializace
   delay(1000);
-  lipo.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
+  //lipo.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // Set up the MAX17048 LiPo fuel gauge:
   if (lipo.begin() == false) // Connect to the MAX17048 using the default wire port
@@ -147,7 +149,7 @@ void setup() {
   Serial.println(F("V"));
 
   // Set the low voltage threshold
-  lipo.setVALRTMin((float)3.9); // Set low voltage threshold (Volts)
+  lipo.setVALRTMin((float)3.0); // Set low voltage threshold (Volts)
 
   // Read and print the low voltage threshold
   Serial.print(F("Low voltage threshold is now: "));
@@ -205,6 +207,8 @@ void setup() {
 
 void goToSleep(){
   Serial.println("going to sleep " + String(SLEEP_SEC) + " sek");
+  lipo.clearAlert();
+  // Fuel Gauge Deep Sleep 
   Serial.print("enableHibernate (Output: 0 on success, positive integer on fail): ");
   Serial.println(lipo.enableHibernate());
 

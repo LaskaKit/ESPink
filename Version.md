@@ -1,4 +1,6 @@
-### Version 3.1
+### Version 3.3
+- Changed pull-ups R14, R19 +3.3V to VSENSOR
+#### Version 3.1
 - Updated, more configurable driver schématic for display, based on displays datasheet and adapters from Good Display.
 - Simplified power switching for display.
 - Switching Battery ADC on GPIO09

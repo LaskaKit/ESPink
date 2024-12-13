@@ -25,6 +25,7 @@
 //       uncomment it in GxEPD2_GFX.h too, or add #include <GFX.h> before any #include <GxEPD2_GFX.h>
 
 #include <GxEPD2_BW.h>
+#include <GxEPD2_3C.h>
 #include <GxEPD2_4C.h>
 #include <SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library.h> // Click here to get the library: http://librarymanager/All#SparkFun_MAX1704x_Fuel_Gauge_Arduino_Library
 #include <Fonts/FreeMonoBold9pt7b.h>
@@ -44,7 +45,8 @@
 SFE_MAX1704X lipo(MAX1704X_MAX17048); // Create a MAX17048
 
 //GxEPD2_BW<GxEPD2_426_GDEQ0426T82, GxEPD2_426_GDEQ0426T82::HEIGHT> display(GxEPD2_426_GDEQ0426T82(SS, DC, RST, BUSY)); // GDEQ0426T82 480x800, SSD1677 (P426010-MF1-A)
-GxEPD2_4C<GxEPD2_290c_GDEY029F51H, GxEPD2_290c_GDEY029F51H::HEIGHT> display(GxEPD2_290c_GDEY029F51H(SS, DC, RST, BUSY)); // GDEY029F51H 168x384, JD79667 (FPC-H004 22.03.24)
+//GxEPD2_4C<GxEPD2_290c_GDEY029F51H, GxEPD2_290c_GDEY029F51H::HEIGHT> display(GxEPD2_290c_GDEY029F51H(SS, DC, RST, BUSY)); // GDEY029F51H 168x384, JD79667 (FPC-H004 22.03.24)
+GxEPD2_3C<GxEPD2_154_Z90c, GxEPD2_154_Z90c::HEIGHT> display(GxEPD2_154_Z90c(SS, DC, RST, BUSY)); // GDEH0154Z90 200x200, SSD1681
 
 void setup() {
   Serial.begin(115200);
@@ -120,7 +122,7 @@ void setup() {
 
 	// We can set an interrupt to alert when the battery SoC gets too low.
 	// We can alert at anywhere between 1% and 32%:
-	lipo.setThreshold(20); // Set alert threshold to 20%.
+	lipo.setThreshold(1); // Set alert threshold to 20%.
 
   // Read and print the battery empty threshold
   Serial.print(F("Battery empty threshold is now: "));
@@ -134,7 +136,7 @@ void setup() {
   Serial.println(F("V"));
 
   // Set the high voltage threshold
-  lipo.setVALRTMax((float)4.1); // Set high voltage threshold (Volts)
+  lipo.setVALRTMax((float)4.5); // Set high voltage threshold (Volts)
 
   // Read and print the high voltage threshold
   Serial.print(F("High voltage threshold is now: "));

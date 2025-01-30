@@ -21,7 +21,7 @@ void setup() {
   Wire.begin (SDA, SCL);
   pwr_mgmt.attatch(Wire); //připojí čip MAX17048 k desce
 
-  Serial.println("Start...");
+  Serial.println("Start....");
 }
 
 void loop() {

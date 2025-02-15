@@ -6,55 +6,49 @@
 * SHT40 (https://www.laskakit.cz/laskakit-sht40-senzor-teploty-a-vlhkosti-vzduchu/) is connected through uSup connector 
 *
 *
-* -------- ESPink pinout -------
-* MOSI/SDI 23
-* CLK/SCK 18
-* SS 5 //CS
-* DC 17 
-* RST 16  
-* BUSY 4 
-* -------------------------------
-*
 * Libraries:
 * SHT40: https://github.com/adafruit/Adafruit_SHT4X
 * EPD library: https://github.com/ZinggJM/GxEPD2
 *
-* made by laskakit (c) 2022
+* made by laskakit (c) 2025
 */
  
 #include <WiFi.h>
 #include <GxEPD2_BW.h>
+#include <GxEPD2_3C.h>
+#include <GxEPD2_4C.h>
 #include "SPI.h"
-
-// SHT40
 #include "Adafruit_SHT4x.h"
-
-// ADC reading
- 
-// Fonts
 #include "OpenSansSB_12px.h"
 #include "OpenSansSB_50px.h"
  
-/*----------------- Pinout of ESPink -------------*/
-// MOSI/SDI 23
-// CLK/SCK 18
-// CS 5
-#define SS 5 //SS
-#define DC 17 // D/C
-#define RST 16  // RES
-#define BUSY 4  //BUSY
-/* ---------------------------------------------- */
+//#define ESPink_V2     //for version v2.6 and earlier
+#define ESPink_V3     //for version v3.0 and above
 
-/*------------------------  Define EPD driver - uncomment the used one  -----------------------------*/
-//GxEPD2_BW<GxEPD2_154_D67, GxEPD2_154_D67::HEIGHT> display(GxEPD2_154_D67(/*CS*/ SS, /*DC*/ DC, /*RST*/ RST, /*BUSY*/ BUSY)); // 1.54" b/w
-//GxEPD2_BW<GxEPD2_154_M10, GxEPD2_154_M10::HEIGHT> display(GxEPD2_154_M10(/*CS*/ SS, /*DC*/ DC, /*RST*/ RST, /*BUSY*/ BUSY)); // 1.54" b/w DES
-//GxEPD2_BW<GxEPD2_213_B74, GxEPD2_213_B74::HEIGHT> display(GxEPD2_213_B74(/*CS*/ SS, /*DC*/ DC, /*RST*/ RST, /*BUSY*/ BUSY)); // 2.13" b/w
-//GxEPD2_BW<GxEPD2_213_M21, GxEPD2_213_M21::HEIGHT> display(GxEPD2_213_M21(/*CS*/ SS, /*DC*/ DC, /*RST*/ RST, /*BUSY*/ BUSY)); // 2.13" b/w DES
-GxEPD2_BW<GxEPD2_270, GxEPD2_270::HEIGHT> display(GxEPD2_270(/*CS=5*/ SS, /*DC=*/ 17, /*RST=*/ 16, /*BUSY=*/ 4)); // GDEW027W3 176x264, EK79652 (IL91874)
-//GxEPD2_BW<GxEPD2_420, GxEPD2_420::HEIGHT> display(GxEPD2_420(/*CS*/ SS, /*DC*/ DC, /*RST*/ RST, /*BUSY*/ BUSY)); // 4.2" b/w
-//GxEPD2_BW<GxEPD2_750_T7, GxEPD2_750_T7::HEIGHT> display(GxEPD2_750_T7(/*CS*/ SS, /*DC*/ DC, /*RST*/ RST, /*BUSY*/ BUSY)); // 7.5" b/w 800x480
-/*  ------------------------------------------------------------------------------------------------- */
-// Note: all supported ePapers you can find on https://github.com/ZinggJM/GxEPD2
+#ifdef ESPink_V2
+  //MOSI/SDI    23
+  //CLK/SCK     18
+  //SS/CS       5
+  #define DC    17 
+  #define RST   16  
+  #define BUSY  4 
+  #define POWER 2
+#else ESPink_V3
+  //MOSI/SDI    11
+  //CLK/SCK     12
+  //SS/CS       10
+  #define DC    48 
+  #define RST   45  
+  #define BUSY  36 
+  #define POWER 47
+  #define SDA   42
+  #define SCL   2
+#endif
+
+//GxEPD2_BW<GxEPD2_426_GDEQ0426T82, GxEPD2_426_GDEQ0426T82::HEIGHT> display(GxEPD2_426_GDEQ0426T82(SS, DC, RST, BUSY)); // GDEQ0426T82 480x800, SSD1677 (P426010-MF1-A)
+//GxEPD2_4C<GxEPD2_290c_GDEY029F51H, GxEPD2_290c_GDEY029F51H::HEIGHT> display(GxEPD2_290c_GDEY029F51H(SS, DC, RST, BUSY)); // GDEY029F51H 168x384, JD79667 (FPC-H004 22.03.24)
+GxEPD2_3C<GxEPD2_154_Z90c, GxEPD2_154_Z90c::HEIGHT> display(GxEPD2_154_Z90c(SS, DC, RST, BUSY)); // GDEH0154Z90 200x200, SSD1681
+//GxEPD2_BW<GxEPD2_750_T7, GxEPD2_750_T7::HEIGHT> display(GxEPD2_750_T7(SS, DC, RST, BUSY)); // 7.5" b/w 800x480
 
 // SHT40
 Adafruit_SHT4x sht4 = Adafruit_SHT4x();
@@ -64,8 +58,8 @@ float vBat = 0.0;
  
 void setup() {
   Serial.begin(115200);
-  pinMode(2, OUTPUT); 
-  digitalWrite(2, HIGH); // enable power supply for ePaper and uSup
+  pinMode(POWER, OUTPUT); 
+  digitalWrite(POWER, HIGH); // enable power supply for ePaper and uSup
   delay(500);
 
   // read ADC and calculate the voltage
@@ -73,6 +67,7 @@ void setup() {
 
 
   /*----------- SHT40 -----------*/
+  Wire.begin(SDA,SCL);
   if (! sht4.begin()) 
   {
     Serial.println("SHT4x not found");
@@ -113,7 +108,7 @@ void setup() {
 
   display.display(false); // update 
   delay(100);
-  digitalWrite(2, LOW); // disable power supply for ePaper
+  digitalWrite(POWER, LOW); // disable power supply for ePaper
 
   // deep sleep mode
   esp_sleep_enable_timer_wakeup(300 * 1000000);
@@ -121,6 +116,4 @@ void setup() {
   esp_deep_sleep_start();
 }
 
-void loop() {
-
-}
+void loop() {}

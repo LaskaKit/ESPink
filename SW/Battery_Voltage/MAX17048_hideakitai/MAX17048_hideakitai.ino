@@ -11,13 +11,16 @@
 
 #define SDA   42
 #define SCL   2
+#define PIN_ON 47
 
 MAX17048 pwr_mgmt;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  
+  pinMode(PIN_ON, OUTPUT);
+  digitalWrite(PIN_ON, HIGH);
+
   Wire.begin (SDA, SCL);
   pwr_mgmt.attatch(Wire); //připojí čip MAX17048 k desce
 

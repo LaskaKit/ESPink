@@ -8,14 +8,19 @@
 #include "Adafruit_MAX1704X.h"
 #define SDA   42
 #define SCL   2
+#define PIN_ON 47
+
 Adafruit_MAX17048 maxlipo;
 
 void setup() {
   Serial.begin(115200);
   while (!Serial) delay(10);    // wait until serial monitor opens
-
+  pinMode(PIN_ON, OUTPUT);
+  digitalWrite(PIN_ON, HIGH);
+  
   Serial.println(F("\nAdafruit MAX17048 advanced demo"));
   Wire.begin (SDA, SCL);
+  delay(100);
   while (!maxlipo.begin()) {
     Serial.println(F("Couldnt find MAX17048?\nMake sure a battery is plugged in!"));
     delay(2000);

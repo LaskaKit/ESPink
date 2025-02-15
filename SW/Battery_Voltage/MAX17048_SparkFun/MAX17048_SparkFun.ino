@@ -17,11 +17,17 @@ Distributed as-is; no warranty is given.
 SFE_MAX1704X lipo(MAX1704X_MAX17048); // Create a MAX17048
 #define SDA   42
 #define SCL   2
+#define PIN_ON 47
+
 void setup()
 {
 	Serial.begin(115200); // Start serial, to output debug data
   while (!Serial)
     ; //Wait for user to open terminal
+
+  pinMode(PIN_ON, OUTPUT);
+  digitalWrite(PIN_ON, HIGH);
+
   Serial.println(F("MAX17048 Example"));
 
   Wire.begin (SDA, SCL);
@@ -29,7 +35,7 @@ void setup()
   lipo.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
 
   // Set up the MAX17048 LiPo fuel gauge:
-  if (lipo.begin() == false) // Connect to the MAX17048 using the default wire port
+  if (lipo.begin(Wire) == false) // Connect to the MAX17048 using the default wire port
   {
     Serial.println(F("MAX17048 not detected. Please check wiring. Freezing."));
     while (1)

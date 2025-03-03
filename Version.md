@@ -1,12 +1,11 @@
 ### Version 3.4
 - Reset button and ESP32 moved about 1.5mm
 #### Version 3.3
-- Changed pull-ups R14, R19 +3.3V to VSENSOR
+- Changed pull-ups R14, R19 +3.3V to VSENSOR, added fuel gauge, new power part
 #### Version 3.1
 - Updated, more configurable driver schématic for display, based on displays datasheet and adapters from Good Display.
 - Simplified power switching for display.
 - Switching Battery ADC on GPIO09
-- TODO: rethink charging, charging alert
 #### Version 2.6
 - Resistor R12 changed to 2.55 Ohm
 #### Version 2.5

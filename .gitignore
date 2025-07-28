@@ -42,6 +42,7 @@
 *.user
 *.sln.docstates
 *.docx
+*.xlsx
 
 # Build results
 [Dd]ebug/
@@ -50,6 +51,7 @@
 *_p.c
 *.ilk
 *.meta
+*.obj
 *.pch
 *.pdb
 *.pgc

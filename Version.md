@@ -1,4 +1,8 @@
-### Version 3.4
+### Version 3.5
+- Epaper BUSY pin changed from IO36 to IO38
+- Epaper CS2 pin changed from IO35 to IO18
+- µŠup SPI MOSI pin changed from IO37 to IO3
+#### Version 3.4
 - Reset button and ESP32 moved about 1.5mm
 #### Version 3.3
 - Changed pull-ups R14, R19 +3.3V to VSENSOR, added fuel gauge, new power part

@@ -33,16 +33,19 @@
   #define RST   16  
   #define BUSY  4 
   #define POWER 2
+  #define BAT   34
+
 #else ESPink_V3
   //MOSI/SDI    11
   //CLK/SCK     12
   //SS/CS       10
   #define DC    48 
   #define RST   45  
-  #define BUSY  36 
+  #define BUSY  38 
   #define POWER 47
   #define SDA   42
   #define SCL   2
+  #define BAT   9
 #endif
 
 //GxEPD2_BW<GxEPD2_426_GDEQ0426T82, GxEPD2_426_GDEQ0426T82::HEIGHT> display(GxEPD2_426_GDEQ0426T82(SS, DC, RST, BUSY)); // GDEQ0426T82 480x800, SSD1677 (P426010-MF1-A)
@@ -63,7 +66,7 @@ void setup() {
   delay(500);
 
   // read ADC and calculate the voltage
-  vBat = analogReadMilliVolts(34) * 1.769 / 1000; // the ratio of divider, R2=1.3M; R1=1M
+  vBat = analogReadMilliVolts(BAT) * 1.769 / 1000; // the ratio of divider, R2=1.3M; R1=1M
 
 
   /*----------- SHT40 -----------*/

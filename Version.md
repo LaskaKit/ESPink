@@ -2,6 +2,7 @@
 - Epaper BUSY pin changed from IO36 to IO38
 - Epaper CS2 pin changed from IO35 to IO18
 - µŠup SPI MOSI pin changed from IO37 to IO3
+- Fuel gauge replaced by ADC
 #### Version 3.4
 - Reset button and ESP32 moved about 1.5mm
 #### Version 3.3
@@ -10,6 +11,8 @@
 - Updated, more configurable driver schématic for display, based on displays datasheet and adapters from Good Display.
 - Simplified power switching for display.
 - Switching Battery ADC on GPIO09
+#### Version 2.7
+- Layout optimization for power delivery and  added 47uF capacitor to for ESP
 #### Version 2.6
 - Resistor R12 changed to 2.55 Ohm
 #### Version 2.5

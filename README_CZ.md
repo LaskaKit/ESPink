@@ -31,7 +31,7 @@ A několik vzorových kódu i na našem githubu https://github.com/LaskaKit/ESPi
 ### Deska
 
 | Funkce | Verze Desky 2.7 | Verze Desky 3.5 |
-| ------------- |:------------------:|--------------------------:|
+| ------------- |:------------------:|:--------------------------:|
 | MOSI/SDI | 23 | 11 |
 | CLK/SCK | 5 | 10 |
 | CS2 | - | 35 |
@@ -42,11 +42,15 @@ A několik vzorových kódu i na našem githubu https://github.com/LaskaKit/ESPi
 
 ### µŠup I2C
 
+| Funkce | Verze Desky 2.7 | Verze Desky 3.5 |
+| ------------- |:------------------:|:--------------------------:|
 |SDA|21|42|
 |SCL|22|2|
 
 ### µŠup SPI
 
+| Funkce | Verze Desky 2.7 | Verze Desky 3.5 |
+| ------------- |:------------------:|:--------------------------:|
 |MOSI/SDI|13|3|
 |MISO/SDO|12|21|
 |SCK|14|14|

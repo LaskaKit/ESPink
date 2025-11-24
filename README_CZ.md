@@ -30,7 +30,7 @@ A několik vzorových kódu i na našem githubu https://github.com/LaskaKit/ESPi
 ## Pinout
 ### Deska
 
-| Funkce |Verze Desky 2.7 |Verze Desky 3.5 |
+| Funkce | Verze Desky 2.7 | Verze Desky 3.5 |
 | MOSI/SDI | 23 | 11 |
 | CLK/SCK | 5 | 10 |
 | CS2 | - | 35 |

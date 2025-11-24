@@ -29,6 +29,7 @@ A několik vzorových kódu i na našem githubu https://github.com/LaskaKit/ESPi
 
 ## Pinout
 ### Deska
+
 |Funkce|Verze Desky 2.7|Verze Desky 3.5|
 |MOSI/SDI|23|11|
 |CLK/SCK|5|10|
@@ -38,9 +39,11 @@ A několik vzorových kódu i na našem githubu https://github.com/LaskaKit/ESPi
 |BUSY|4|38|
 |Dělič napětí|34|9|
 ### µŠup I2C
+
 |SDA|21|42|
 |SCL|22|2|
 ### µŠup SPI
+
 |MOSI/SDI|13|3|
 |MISO/SDO|12|21|
 |SCK|14|14|

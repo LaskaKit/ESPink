@@ -8,7 +8,7 @@
 * made by laskakit (c) 2024
 */
  
-#include <Wi Fi.h>
+#include <WiFi.h>
 #include <GxEPD2_BW.h>
 #include <GxEPD2_3C.h>
 #include <GxEPD2_4C.h>

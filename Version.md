@@ -1,4 +1,6 @@
-### Version 3.5
+### Version 3.6
+- Fixed typo: IO35 on the top was marked 38
+#### Version 3.5
 - Epaper BUSY pin changed from IO36 to IO38
 - Epaper CS2 pin changed from IO35 to IO18
 - µŠup SPI MOSI pin changed from IO37 to IO3

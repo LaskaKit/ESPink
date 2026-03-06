@@ -1,4 +1,5 @@
 ### Version 3.6
+- Jumper for Pervasive Displays added
 - Fixed typo: IO35 on the top was marked 38
 #### Version 3.5
 - Epaper BUSY pin changed from IO36 to IO38

@@ -1,4 +1,4 @@
-![ESPink top](https://github.com/LaskaKit/ESPink/blob/main/img/ESPink_pinout.JPG)
+![ESPink top](https://github.com/LaskaKit/ESPink/blob/main/img/ESP32-ESPInk_pinout.png)
 
 # ESPink - versatile and low power board with ESP32 for ePaper/eInk
 
@@ -53,3 +53,35 @@ We prepared example codes available here: https://github.com/LaskaKit/ESPink/tre
 |MISO/SDO|12|21|
 |SCK|14|14|
 |CS|15|46|
+
+### DIP Switch positions
+| Display Name | Positions |
+| ------------ | -------   |
+| GDEW0154T8D  | ON/ON     |
+| GDEY0154D67  | OFF/ON    |
+| GDEY0154ZD0  | OFF/ON    |
+| GDEY0213B74  | OFF/ON    |
+| GDEW0213T5D  | ON/ON     |
+| GDEY027T91   | OFF/ON    |
+| GDEW029T5D   | OFF/OFF   |
+| GDEY029T94   | OFF/OFF   |
+| GDEY029F51H  | OFF/ON    |
+| GDEY029T71H  | ON/OFF    |
+| GDEY042T81   | OFF/ON    |
+| GDEQ042Z21   | ON/OFF    |
+| GDEY042Z98   | OFF/OFF   |
+| GDEQ0426T82  | OFF/ON    |
+| GDEP0565D90  | ON/OFF    |
+| GDEQ0583T31  | ON/OFF    |  
+| GDEQ0583Z31  | ON/OFF    |
+| GDEY075T7    | ON/OFF    |
+| GDEY075Z08   | ON/OFF    |
+| GDEM075F52   | OFF/ON    |
+| GDEM102T91   | OFF/ON    |
+| GDEM102Z91   | OFF/ON    |
+| GDEM1085T51  | OFF/OFF   |
+| GDEY116Z91   | OFF/ON    |
+| GDEY116T91   | OFF/ON    |
+| GDEY116F51   | OFF/OFF   |
+| GDEM133Z91   | OFF/ON    |
+| GDEM133T91   | OFF/ON    | 

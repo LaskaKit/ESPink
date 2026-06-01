@@ -76,7 +76,7 @@ We prepared example codes available here: https://github.com/LaskaKit/ESPink/tre
 | GDEQ0583Z31  | ON/OFF    |
 | GDEY075T7    | ON/OFF    |
 | GDEY075Z08   | ON/OFF    |
-| GDEM075F52   | OFF/ON    |
+| GDEM075F52   | OFF/OFF   |
 | GDEM102T91   | OFF/ON    |
 | GDEM102Z91   | OFF/ON    |
 | GDEM1085T51  | OFF/OFF   |
